@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: config-client
+  cloud:
+    config:
+      label: master
+      profile: dev
+      discovery:
+        service-id: config-server
+        enabled: true
+      #uri: http://localhost:7060/
+server:
+  port: 7061
+eureka:
+    client:
+      service-url:
+        defaultZone: http://localhost:8081/eureka/

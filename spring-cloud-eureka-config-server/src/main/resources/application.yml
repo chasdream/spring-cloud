@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/chasdream/spring-cloud-config.git
+          search-paths: spring-cloud-config
+      label: master
+server:
+  port: 7060
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8081/eureka/
