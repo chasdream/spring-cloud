@@ -717,5 +717,109 @@ bootstrap.yml配置文件说明:
           service-url:
             defaultZone: http://localhost:8081/eureka/
 
-7.
+7.消息总线(spring cloud bus)
+
+7.1 spring cloud bus概述
+
+- Spring Cloud Bus将分布式系统的节点与轻量级消息代理链接，可以用于广播配置文件的更改或其他管理指令，也可用于监控和应用程序之间的通信通道;
+- Spring Cloud Bus唯一的实现是通过使用AMQP代理作为传输，默认支持rabbitmq和kafka
+
+7.2 通过配置kafka实现消息总线服务(spring-cloud-eureka-config-client)
+
+7.2.1 config-server连接到kafka服务器
+
+> 配置文件服务端pom.xml
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-bus-kafka</artifactId>
+    </dependency>
+
+> 配置文件服务端application.yml
+
+    spring:
+      application:
+        name: config-server
+      cloud:
+        config:
+          server:
+            git:
+              uri: https://github.com/chasdream/spring-cloud-config.git
+              search-paths: spring-cloud-config
+          label: master
+        stream:
+          kafka:
+            binder:
+              brokers: 127.0.0.1:9092
+              zk-nodes: 127.0.0.1:2181
+    server:
+      port: 7060
+    eureka:
+      client:
+        service-url:
+          defaultZone: http://localhost:8081/eureka/
+
+注：
+- spring.cloud.stream.kafka.binder.brokers 配置kafka服务列表
+- spring.cloud.stream.kafka.binder.defaultBrokerPort 配置kafka服务默认端口，如果brokers没有配置端口这使用默认值9092
+- spring.cloud.stream.kafka.binder.zk-nodes 配置zk节点列表
+- spring.cloud.stream.kafka.binder.defaultZkPort 配置zk节点默认端口，如果zk-nodes没有配置端口这使用默认值2181
+
+7.2.2 config-client连接kafka服务器
+
+> 配置文件客户端pom.xml
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-bus-kafka</artifactId>
+    </dependency>
+
+> 配置文件客户端bootstrap.yml
+
+    spring:
+      application:
+        name: config-client
+      cloud:
+        config:
+          label: master
+          profile: dev
+          discovery:
+            service-id: config-server
+            enabled: true
+          #uri: http://localhost:7060/
+        stream:
+          kafka:
+            binder:
+              brokers: 127.0.0.1:9092
+              zk-nodes: 127.0.0.1:2181
+    server:
+      port: 7061
+    eureka:
+        client:
+          service-url:
+            defaultZone: http://localhost:8081/eureka/
+    management:
+      security:
+        enabled: false
+
+注：
+- management.security.enabled false:禁用安全管理策略
+- @RefreshScope 允许动态刷新配置
+- 文件配置客户端发post请求http://localhost:7061/bus/refresh 重新读取git配置文件信息
+
+@RefreshScope示例：
+
+    @Controller
+    @RefreshScope
+    public class ConfigController {
+
+        @Value("${name}")
+        public String name;
+
+        @ResponseBody
+        @RequestMapping(value = "/config")
+        public String config() {
+            return name;
+        }
+    }
 

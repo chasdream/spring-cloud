@@ -8,6 +8,11 @@ spring:
           uri: https://github.com/chasdream/spring-cloud-config.git
           search-paths: spring-cloud-config
       label: master
+    stream:
+      kafka:
+        binder:
+          brokers: 127.0.0.1:9092
+          zk-nodes: 127.0.0.1:2181
 server:
   port: 7060
 eureka:

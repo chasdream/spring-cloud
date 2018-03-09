@@ -9,9 +9,17 @@ spring:
         service-id: config-server
         enabled: true
       #uri: http://localhost:7060/
+    stream:
+      kafka:
+        binder:
+          brokers: 127.0.0.1:9092
+          zk-nodes: 127.0.0.1:2181
 server:
   port: 7061
 eureka:
     client:
       service-url:
         defaultZone: http://localhost:8081/eureka/
+management:
+  security:
+    enabled: false
