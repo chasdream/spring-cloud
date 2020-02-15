@@ -8,6 +8,7 @@
  */
 package com.spring.cloud.eureka.controller;
 
+import com.spring.cloud.eureka.api.FeignSecondService;
 import com.spring.cloud.eureka.service.FeignService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +32,16 @@ public class IndexController {
     @Autowired
     private FeignService feignService;
 
+    @Autowired
+    private FeignSecondService feignSecondService;
+
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String feign(String name) {
         return feignService.feign(name);
+    }
+
+    @RequestMapping(value = "/second/testFeign", method = RequestMethod.GET)
+    public String testFeign() {
+        return feignSecondService.testFeign("feign");
     }
 }

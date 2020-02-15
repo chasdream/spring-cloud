@@ -11,6 +11,10 @@
     <name>spring-cloud</name>
     <description>Demo project for Spring Boot</description>
 
+    <modules>
+        <module>spring-cloud-eureka-provider-api</module>
+    </modules>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
